@@ -1,0 +1,28 @@
+{
+  "name": "ngx-zoom-image",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laxersnine/ngx-zoom-image"
+  },
+  "author": {
+    "name": "Davis Yang",
+    "email": "laxersnine@gmail.com"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/laxersnine/ngx-zoom-image/issues"
+  },
+  "main": "ngx-zoom-image.umd.js",
+  "module": "ngx-zoom-image.js",
+  "jsnext:main": "ngx-zoom-image.js",
+  "typings": "ngx-zoom-image.d.ts",
+  "peerDependencies": {
+    "@angular/core": "^4.0.0",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.8.4"
+  }
+}
