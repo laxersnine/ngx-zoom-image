@@ -109,11 +109,8 @@ export class ZoomImageDirective implements OnChanges {
         if (this.currentEvent.type === 'mousemove') {
             const container = this.element.nativeElement.parentNode;
 
-            this.renderer.setStyle(
-                this.imageZoomLen,
-                'background-position',
-                // tslint:disable-next-line:max-line-length
-                `-${(event.clientX - container.offsetLeft) * this.widthRatio}px -${(event.clientY - container.offsetTop) * this.heightRatio}px`);
+            this.renderer.setStyle(this.imageZoomLen, "background-position", // tslint:disable-next-line:max-line-length
+                `-${(event.clientX - container.offsetLeft) * this.widthRatio}px -${(event.clientY - this.element.nativeElement.y) * this.heightRatio}px`);
         }
     }
 
