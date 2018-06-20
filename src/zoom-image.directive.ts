@@ -12,7 +12,7 @@ import {
 export class ZoomImageDirective implements OnChanges {
     @Input() imgSrc: string;
     @Input() zoomImage: string;
-    @Input() len: {'z-index': number, 'background-color': string} = {'z-index': 999, 'background-color': ''};
+    @Input() len: { 'z-index': number, 'background-color': string } = { 'z-index': 999, 'background-color': '' };
 
     private imageZoomLen: HTMLDivElement;
     private zoomImg: HTMLImageElement;
@@ -39,6 +39,8 @@ export class ZoomImageDirective implements OnChanges {
         this.renderer.setStyle(this.imageZoomLen, 'z-index', this.len['z-index']);
         this.renderer.setStyle(this.imageZoomLen, 'background-color', this.len['background-color']);
         this.renderer.insertBefore(container, this.imageZoomLen, this.element.nativeElement);
+
+        this.initTouchEvent();
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -51,9 +53,6 @@ export class ZoomImageDirective implements OnChanges {
         this.imgLoaded = false;
         this.zoomImgLoaded = false;
 
-        // if (!!this.imageZoomLen) {
-        //     this.renderer.removeStyle(this.imageZoomLen, 'background-image');
-        // }
         if (this.element.nativeElement instanceof HTMLImageElement) {
             const element = this.element.nativeElement;
             this.zoomImg = new Image();
@@ -109,8 +108,9 @@ export class ZoomImageDirective implements OnChanges {
         if (this.currentEvent.type === 'mousemove') {
             const container = this.element.nativeElement.parentNode;
 
-            this.renderer.setStyle(this.imageZoomLen, "background-position", // tslint:disable-next-line:max-line-length
-                `-${(event.clientX - container.offsetLeft) * this.widthRatio}px -${(event.clientY - this.element.nativeElement.y) * this.heightRatio}px`);
+            this.renderer.setStyle(this.imageZoomLen, 'background-position',
+                // tslint:disable-next-line:max-line-length
+                `-${(event.clientX - container.offsetLeft) * this.widthRatio}px - ${(event.clientY - this.element.nativeElement.y) * this.heightRatio}px`);
         }
     }
 
@@ -125,5 +125,27 @@ export class ZoomImageDirective implements OnChanges {
     @HostListener('window:resize')
     onWindowResize() {
         this.setRatio();
+    }
+
+    initTouchEvent() {
+        const mouseEventTypes = {
+            touchstart: 'mousedown',
+            touchmove: 'mousemove',
+            touchend: 'mouseup'
+        };
+
+        for (let originalType in mouseEventTypes) {
+            if (mouseEventTypes.hasOwnProperty(originalType)) {
+                this.renderer.listen(this.imageZoomLen,
+                    originalType,
+                    ($event: TouchEvent) => {
+                        const mouseEvent = new MouseEvent(mouseEventTypes[$event.type]);
+                        const touch = $event.changedTouches[0];
+                        mouseEvent.initMouseEvent(mouseEventTypes[$event.type], true, true, window, 0, touch.screenX, touch.screenY,
+                            touch.clientX, touch.clientY, false, false, false, false, 0, null);
+                        $event.target.dispatchEvent(mouseEvent);
+                    });
+            }
+        }
     }
 }
